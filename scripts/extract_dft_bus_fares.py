@@ -386,7 +386,9 @@ def validate(observations: list[Observation], natives: dict[str, dict[str, str]]
         for key in keys:
             counts[key] = counts.get(key, 0) + 1
         duplicates = sorted(key for key, count in counts.items() if count > 1)[:5]
-        raise ValueError(f"DfT bus fares published duplicate observations, for example {duplicates}")
+        raise ValueError(
+            f"DfT bus fares published duplicate observations, for example {duplicates}"
+        )
 
     dates = sorted({observation.reference_date for observation in observations})
     if dates[0] != EXPECTED_FIRST_OBSERVATION:
@@ -411,7 +413,9 @@ def validate(observations: list[Observation], natives: dict[str, dict[str, str]]
         )
 
     long_gaps = [
-        (earlier, later) for earlier, later in pairwise(dates) if (later - earlier).days > MAX_GAP_DAYS
+        (earlier, later)
+        for earlier, later in pairwise(dates)
+        if (later - earlier).days > MAX_GAP_DAYS
     ]
     if long_gaps:
         raise ValueError(
