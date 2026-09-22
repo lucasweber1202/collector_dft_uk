@@ -154,7 +154,7 @@ def make_series_id(measure: str, region_token: str, base_period: str = BASE_PERI
     return series_id
 
 
-def parse_series_id(series_id: str) -> tuple[str, str, str, str, str]:
+def describe_series_id(series_id: str) -> tuple[str, str, str, str, str]:
     """Decode ``DFT_BUS0415_{MEASURE}_{REGION}_B{BASE}`` into its five parts."""
     parts = series_id.split("_")
     if len(parts) != 5 or parts[0] != "DFT" or parts[1] != "BUS0415":
@@ -167,6 +167,19 @@ def parse_series_id(series_id: str) -> tuple[str, str, str, str, str]:
     if not re.fullmatch(r"B\d{6}", base):
         raise ValueError(f"DfT bus fares series_id carries no base period: {series_id}")
     return source, dataset, measure, region, base[1:]
+
+
+def parse_series_id(series_id: str) -> tuple[str, ...]:
+    """Split a canonical id into its raw underscore components.
+
+    This is the fleet contract (GUIDELINES.md 4): uppercase, underscore
+    separated, ordered coarse -> fine, and exactly reversible, so
+    build_series_id(*parse_series_id(sid)) == sid. The decoded view -- which
+    strips the base-period marker and types the numeric parts -- is
+    describe_series_id, which validates the same grammar.
+    """
+    describe_series_id(series_id)
+    return tuple(series_id.split("_"))
 
 
 def _normalise_header(raw: str) -> str:
