@@ -19,10 +19,10 @@ from scripts.extract_dft_bus_fares import (
     SHEETS,
     _build_catalog,
     _classify_columns,
+    describe_series_id,
     fares_release_timestamps,
     make_series_id,
     parse_ods,
-    parse_series_id,
     validate,
 )
 from scripts.metadata import validate_catalog
@@ -240,7 +240,7 @@ def test_series_ids_round_trip() -> None:
     for measure in SHEETS.values():
         for region in REGIONS:
             series_id = make_series_id(measure, region)
-            _source, _dataset, parsed_measure, parsed_region, base = parse_series_id(series_id)
+            _source, _dataset, parsed_measure, parsed_region, base = describe_series_id(series_id)
             assert make_series_id(parsed_measure, parsed_region) == series_id
             assert base == BASE_PERIOD
 
@@ -266,7 +266,7 @@ def test_current_and_real_of_the_same_region_are_distinct_series() -> None:
 )
 def test_a_malformed_series_id_is_refused(series_id: str) -> None:
     with pytest.raises(ValueError):
-        parse_series_id(series_id)
+        describe_series_id(series_id)
 
 
 # --- validation gates ----------------------------------------------------
